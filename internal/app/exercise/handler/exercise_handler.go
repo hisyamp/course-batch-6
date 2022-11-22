@@ -6,6 +6,7 @@ import (
 	"strconv"
 	"strings"
 	"sync"
+	"time"
 
 	"github.com/gin-gonic/gin"
 	"gorm.io/gorm"
@@ -13,6 +14,27 @@ import (
 
 type ExerciseHandler struct {
 	db *gorm.DB
+}
+
+type Exercise struct {
+	title       string     `json:"title"`
+	description string     `json:"description"`
+	questions   []Question `json:"questions"`
+}
+
+type Question struct {
+	ID            int
+	ExerciseID    int
+	Body          string
+	OptionA       string
+	OptionB       string
+	OptionC       string
+	OptionD       string
+	CorrectAnswer string
+	Score         int
+	CreatorID     int
+	CreatedAt     time.Time
+	UpdatedAt     time.Time
 }
 
 func NewExerciseHandler(db *gorm.DB) *ExerciseHandler {
@@ -37,6 +59,7 @@ func (eh ExerciseHandler) GetExerciseByID(c *gin.Context) {
 		})
 		return
 	}
+	// fmt.Println(exercise)
 	c.JSON(http.StatusOK, exercise)
 }
 
@@ -52,6 +75,7 @@ func (eh ExerciseHandler) GetScore(c *gin.Context) {
 
 	var exercise domain.Exercise
 	err = eh.db.Where("id = ?", id).Preload("Questions").Take(&exercise).Error
+
 	if err != nil {
 		c.JSON(http.StatusNotFound, map[string]string{
 			"message": "exercise not found",
@@ -103,3 +127,31 @@ func (s *Score) Inc(value int) {
 	defer s.mu.Unlock()
 	s.total += value
 }
+
+func (uh ExerciseHandler) CreateExercise(c *gin.Context) {
+	var createExercise domain.ExerciseNew
+	if err := c.ShouldBind(&createExercise); err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"message": "invalid body",
+		})
+	}
+
+	exercise, err := domain.NewExercise(createExercise.Title, createExercise.Description)
+	if err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
+	}
+	if err := uh.db.Create(exercise).Error; err != nil {
+		c.JSON(http.StatusBadRequest, map[string]string{
+			"message": err.Error(),
+		})
+	}
+
+	c.JSON(http.StatusOK, map[string]string{
+		"Message": "Sukses Create Exercise!",
+	})
+
+}
+
+
