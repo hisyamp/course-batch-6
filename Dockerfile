@@ -2,7 +2,7 @@
 
 FROM golang:1.19.3-alpine
 
-WORKDIR /app
+WORKDIR /cmd/api
 
 COPY go.mod ./
 COPY go.sum ./
