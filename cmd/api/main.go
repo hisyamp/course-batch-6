@@ -17,11 +17,7 @@ import (
 
 func main() {
 	r := gin.Default()
-	r.GET("/", func(c *gin.Context) {
-		c.JSON(http.StatusOK, map[string]string{
-			"message": "Hi!",
-		})
-	})
+	
 	v1 := r.Group("/api/v1")
 	{
 
@@ -44,6 +40,11 @@ func main() {
 		v1.POST("/question", middleware.WithAuh(), questionHandler.CreateQuestion)
 		v1.POST("/login", userHandler.Login)
 	}
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, map[string]string{
+			"message": "Hi!",
+		})
+	})
 	var port string
 	if os.Getenv("PORT") != "" {
 		port = os.Getenv("PORT")
