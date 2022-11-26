@@ -25,6 +25,11 @@ func main() {
 				"message": "hello world",
 			})
 		})
+		v1.GET("/", func(c *gin.Context) {
+			c.JSON(http.StatusOK, map[string]string{
+				"message": "Hi!",
+			})
+		})
 	
 		db := database.NewConnDatabase()
 		exerciseHandler := handler.NewExerciseHandler(db)
