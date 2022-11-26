@@ -17,6 +17,11 @@ import (
 
 func main() {
 	r := gin.Default()
+	r.GET("/", func(c *gin.Context) {
+		c.JSON(http.StatusOK, map[string]string{
+			"message": "Hi!",
+		})
+	})
 	v1 := r.Group("/api/v1")
 	{
 
@@ -25,12 +30,6 @@ func main() {
 				"message": "hello world",
 			})
 		})
-		v1.GET("/", func(c *gin.Context) {
-			c.JSON(http.StatusOK, map[string]string{
-				"message": "Hi!",
-			})
-		})
-	
 		db := database.NewConnDatabase()
 		exerciseHandler := handler.NewExerciseHandler(db)
 		userHandler := userHandler.NewUserHandler(db)
