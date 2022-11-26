@@ -10,7 +10,7 @@ RUN go mod download
 
 COPY . .
 
-RUN go build app/main.go
+RUN go build cmd/api/main.go
 
 EXPOSE 1234
 
