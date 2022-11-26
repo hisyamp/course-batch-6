@@ -14,4 +14,4 @@ RUN go build cmd/api/main.go
 
 EXPOSE 1234
 
-CMD [ "/cmd/api" ]
+CMD [ "/cmd/api/main" ]
