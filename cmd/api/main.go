@@ -7,7 +7,10 @@ import (
 	questionHandler "exercise/internal/app/question/handler"
 	userHandler "exercise/internal/app/user/handler"
 	"exercise/internal/pkg/middleware"
+	"fmt"
+	"log"
 	"net/http"
+	"os"
 
 	"github.com/gin-gonic/gin"
 )
@@ -37,5 +40,11 @@ func main() {
 		v1.POST("/question", middleware.WithAuh(), questionHandler.CreateQuestion)
 		v1.POST("/login", userHandler.Login)
 	}
-	r.Run(":1234")
+	var port string
+	if os.Getenv("PORT") != "" {
+		port = os.Getenv("PORT")
+	} else {
+		port = "1234"
+	}
+	log.Fatal(r.Run(fmt.Sprintf(":%s", port)))
 }
